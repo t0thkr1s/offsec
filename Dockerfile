@@ -1,13 +1,9 @@
-# docker build -t pentest .
-# docker run -p 8000:8000 -p 9898:9898 -p 9797:9797 --hostname kali-docker --rm -v $PWD:/root/shared --cap-add=SYS_PTRACE --security-opt seccomp=unconfined -d --name pentest -i pentest
-# docker exec -it pentest /usr/bin/fish
-
 FROM kalilinux/kali-rolling
 ENV LC_CTYPE C.UTF-8
 WORKDIR /root
 COPY wordlists.zip .
 RUN apt update && apt full-upgrade -y && \
-apt install -y fish neovim nmap ncat nikto smbclient smbmap ruby-dev john foremost exiftool metasploit-framework binwalk hashcat hydra inetutils-ping gobuster dirb wpscan exploitdb build-essential golang jq strace ltrace curl wget rubygems gcc dnsutils netcat gcc-multilib net-tools vim gdb gdb-multiarch python python3 python3-pip python3-dev libssl-dev libffi-dev wget git make procps libpcre3-dev libdb-dev libxt-dev libxaw7-dev python-pip && \
+apt install -y fish neovim nmap ncat nikto smbclient smbmap sqlmap ruby-dev john foremost exiftool metasploit-framework binwalk hashcat hydra inetutils-ping gobuster dirb wpscan exploitdb build-essential golang jq strace ltrace curl wget rubygems gcc dnsutils netcat gcc-multilib net-tools vim gdb gdb-multiarch python python3 python3-pip python3-dev libssl-dev libffi-dev wget git make procps libpcre3-dev libdb-dev libxt-dev libxaw7-dev python-pip && \
 pip3 install requests capstone pwntools keystone-engine unicorn capstone ropper && \
 apt autoremove && apt autoclean && rm -rf /var/lib/apt/lists/* && \
 unzip wordlists.zip && rm wordlists.zip && \
