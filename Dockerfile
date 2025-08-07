@@ -1,32 +1,68 @@
-FROM ubuntu:rolling
+FROM ubuntu:22.04
 ENV LC_CTYPE C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
-# Update package lists and upgrade system
+# Update and install packages
 RUN apt update && apt full-upgrade -y && \
-    # Install core dependencies
+    # Install core dependencies first
     apt install -y \
-    # Editors and utilities
-    neovim wget curl jq git make procps \
-    # Security and network tools  
-    radare2 nmap ncat ftp binwalk inetutils-ping dnsutils netcat net-tools \
-    # Development tools
-    build-essential golang gcc gcc-multilib \
-    # Debugging tools
-    gdb gdb-multiarch strace ltrace \
-    # Python and development libraries
-    python3 python3-pip python3-dev python3-venv \
-    # Additional development libraries
-    libssl-dev libffi-dev libpcre3-dev libdb-dev libxt-dev libxaw7-dev \
-    # Web development
+    software-properties-common \
+    curl \
+    wget \
+    git && \
+    # Fix potential package issues
+    apt --fix-broken install -y && \
+    # Install remaining packages
+    apt install -y \
+    neovim \
+    jq \
+    make \
+    procps \
+    radare2 \
+    nmap \
+    ncat \
+    ftp \
+    binwalk \
+    inetutils-ping \
+    dnsutils \
+    netcat \
+    net-tools \
+    build-essential \
+    golang \
+    gcc \
+    gcc-multilib \
+    gdb \
+    gdb-multiarch \
+    strace \
+    ltrace \
+    python3 \
+    python3-dev \
+    python3-venv \
+    python3-distutils \
+    libssl-dev \
+    libffi-dev \
+    libpcre3-dev \
+    libdb-dev \
+    libxt-dev \
+    libxaw7-dev \
     php && \
-    # Install Python packages using pip3
-    pip3 install --break-system-packages \
-    requests capstone pwntools keystone-engine unicorn ropper ropgadget && \
-    # Clean up package cache
-    apt autoremove -y && apt autoclean && rm -rf /var/lib/apt/lists/* && \
-    # Install GEF (GDB Enhanced Features)
+    # Install pip using get-pip.py method to avoid conflicts
+    curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
+    # Install Python packages
+    python3 -m pip install \
+    requests \
+    capstone \
+    pwntools \
+    keystone-engine \
+    unicorn \
+    ropper \
+    ropgadget && \
+    # Clean up
+    apt autoremove -y && \
+    apt autoclean && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Install GEF
     wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
 
 # Set Python3 as default python
