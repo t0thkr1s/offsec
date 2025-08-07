@@ -3,61 +3,28 @@ ENV LC_CTYPE=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
 
-# Update and install all available packages
+# Update and install all packages
 RUN apt update && apt full-upgrade -y && \
     apt install -y \
-    software-properties-common \
-    curl \
-    wget \
-    git \
-    neovim \
-    jq \
-    make \
-    procps \
-    nmap \
-    ftp \
-    binwalk \
-    inetutils-ping \
-    dnsutils \
-    netcat-traditional \
-    net-tools \
-    build-essential \
-    golang \
-    gcc \
-    gcc-multilib \
-    gdb \
-    gdb-multiarch \
-    strace \
-    ltrace \
-    python3 \
-    python3-dev \
-    python3-venv \
-    libssl-dev \
-    libffi-dev \
-    libpcre3-dev \
-    libdb-dev \
-    libxt-dev \
-    libxaw7-dev \
-    php
+    curl wget git neovim jq make procps \
+    nmap ftp binwalk inetutils-ping dnsutils \
+    netcat-traditional net-tools build-essential \
+    golang gcc gcc-multilib gdb gdb-multiarch \
+    strace ltrace php python3 python3-dev \
+    python3-venv python3-pip libssl-dev \
+    libffi-dev libpcre3-dev libdb-dev \
+    libxt-dev libxaw7-dev ca-certificates
 
-# Install pip and Python packages
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3 && \
+# Install Python packages using apt's pip3
+RUN python3 -m pip install --break-system-packages \
+    requests capstone pwntools keystone-engine \
+    unicorn ropper ropgadget || \
     python3 -m pip install \
-    requests \
-    capstone \
-    pwntools \
-    keystone-engine \
-    unicorn \
-    ropper \
-    ropgadget
-
-# Install radare2 via snap as alternative
-RUN apt install -y snapd || echo "Snapd not available" && \
-    (snap install radare2 || echo "Radare2 snap installation failed")
+    requests capstone pwntools keystone-engine \
+    unicorn ropper ropgadget
 
 # Clean up and install GEF
-RUN apt autoremove -y && \
-    apt autoclean && \
+RUN apt autoremove -y && apt autoclean && \
     rm -rf /var/lib/apt/lists/* && \
     wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
 
